@@ -12,7 +12,10 @@
   "content_scripts": [
     {
       "js": [
-        "./src/content.js"
+        "./js/content.js"
+      ],
+      "css": [
+        "./css/content.css"
       ],
       "matches": [
         "*://boards.4chan.org/*"
@@ -20,7 +23,7 @@
     },
     {
       "js": [
-        "./src/localStorage.js"
+        "./js/localStorage.js"
       ],
       "matches": [
         "*://boards.4chan.org/*"
@@ -30,9 +33,19 @@
     }
   ],
   "background": {
-    "service_worker": "./src/background.js"
+    "service_worker": "./js/background.js"
   },
   "permissions": [
     "storage"
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": [
+        "icons/*"
+      ],
+      "matches": [
+        "*://boards.4chan.org/*"
+      ]
+    }
   ]
 }

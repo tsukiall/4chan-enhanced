@@ -1,18 +1,4 @@
-const settings = [
-  '4chan-settings',
-  'catalog-settings',
-  'catalog-theme',
-  '4chan-css',
-  '4chan-volume',
-  '4chan-watch',
-  'fce_update_hash',
-  '4chan-tw-timestamp',
-];
-
-const iterableSettings = [
-  '4chan-hide-t',
-  '4chan-pin',
-];
+import { iterableSettingKeys, settingKeys } from "./util/keys.js";
 
 chrome.runtime.onMessage.addListener((message, _, sendResponse) => {
   (async () => {
@@ -22,14 +8,14 @@ chrome.runtime.onMessage.addListener((message, _, sendResponse) => {
       case 'getStorage':
         const response = {};
 
-        for (let key of settings) {
+        for (let key of settingKeys) {
           data = await chrome.storage.sync.get(key);
           if (data[key]) {
             response[key] = data[key];
           }
         }
 
-        for (let key of iterableSettings) {
+        for (let key of iterableSettingKeys) {
           for (let board of message.boards) {
             data = await chrome.storage.sync.get(`${key}-${board}`);
 

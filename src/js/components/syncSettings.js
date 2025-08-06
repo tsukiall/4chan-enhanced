@@ -1,21 +1,7 @@
-const settings = [
-  '4chan-settings',
-  'catalog-settings',
-  'catalog-theme',
-  '4chan-css',
-  '4chan-volume',
-  '4chan-watch',
-  'fce_update_hash',
-  '4chan-tw-timestamp',
-];
-
-const iterableSettings = [
-  '4chan-hide-t',
-  '4chan-pin',
-];
+import { iterableSettingKeys, settingKeys } from '../util/keys.js';
 
 const downloadSettings = syncSettings => {
-  for (let key of settings) {
+  for (let key of settingKeys) {
     localStorage.setItem(key, syncSettings[key], false);
   }
 
@@ -25,7 +11,7 @@ const downloadSettings = syncSettings => {
 const uploadSettings = async boards => {
   const siteSettings = {};
 
-  for (let key of settings) {
+  for (let key of settingKeys) {
     const siteSetting = localStorage.getItem(key);
 
     if (siteSetting) {
@@ -33,7 +19,7 @@ const uploadSettings = async boards => {
     }
   }
 
-  for (let key of iterableSettings) {
+  for (let key of iterableSettingKeys) {
     for (let board of boards) {
       const siteSetting = localStorage.getItem(`${key}-${board}`);
 
@@ -53,7 +39,7 @@ const uploadSettings = async boards => {
   }
 }
 
-const syncSettings = async () => {
+export default async () => {
   const boards = Array.from(document.querySelectorAll('#boardNavDesktop .boardList>a')).map(e => e.textContent);
 
   const updateHash = localStorage.getItem('fce_update_hash');
@@ -79,7 +65,3 @@ const syncSettings = async () => {
     await uploadSettings(boards);
   });
 };
-
-(async () => {
-  await syncSettings();
-})();
