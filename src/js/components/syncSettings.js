@@ -1,3 +1,4 @@
+import debounce from '../util/debounce.js';
 import { iterableSettingKeys, settingKeys } from '../util/keys.js';
 
 const downloadSettings = syncSettings => {
@@ -59,9 +60,12 @@ export default async () => {
     await uploadSettings(boards);
   }
 
-  document.addEventListener('fce:storage-updated', async e => {
+  const syncLocalStorage = async () => {
+    console.log('boop');
     const updateHash = new Date().getTime();
     localStorage.setItem('fce_update_hash', updateHash, false);
     await uploadSettings(boards);
-  });
+  }
+
+  document.addEventListener('fce:storage-updated', debounce(syncLocalStorage, 1000));
 };
