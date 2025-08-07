@@ -31,7 +31,7 @@ const catalogActions = () => {
     container.append(hide);
 
     const hideIcon = document.createElement('img');
-    hideIcon.src = chrome.runtime.getURL('icons/x-solid-full.svg');
+    hideIcon.src = chrome.runtime.getURL('icons/eye-solid-full.svg');
     hide.append(hideIcon);
   });
 }
