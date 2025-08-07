@@ -9,3 +9,5 @@ All of the settings the site stores in the local storage and cookies are also st
 - The post metadata is colored red when a limit on replies or images has been reached.
 - Watched threads are outlined similar to pinned ones.
 - Image hover is added to catalog.
+### Thread Watcher UI Changes
+- Added board dividers

@@ -52,6 +52,7 @@
 }
 
 #image-hover {
+  z-index: 100001;
   aspect-ratio: unset;
   position: fixed;
   top: 0;
@@ -59,4 +60,14 @@
   pointer-events: none;
   max-height: 100%;
   max-width: 100%;
+}
+
+#threadWatcher {
+  #watchList {
+    .heading {
+      text-align: center;
+      font-weight: bold;
+      margin: 4px 0;
+    }
+  }
 }
