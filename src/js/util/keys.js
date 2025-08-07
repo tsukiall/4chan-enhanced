@@ -13,3 +13,9 @@ export const iterableSettingKeys = [
   '4chan-hide-t',
   '4chan-pin',
 ];
+
+export const apiKeys = {
+  dataApi: 'https://a.4cdn.org/',
+  mediaApi: 'https://i.4cdn.org/',
+  staticApi: 'https://s.4cdn.org/',
+}

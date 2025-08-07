@@ -8,3 +8,4 @@ All of the settings the site stores in the local storage and cookies are also st
 - The post subject is moved to a new row for better clarity between the subject and the OP comment.
 - The post metadata is colored red when a limit on replies or images has been reached.
 - Watched threads are outlined similar to pinned ones.
+- Image hover is added to catalog.

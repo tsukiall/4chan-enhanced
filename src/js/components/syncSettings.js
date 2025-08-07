@@ -61,7 +61,6 @@ export default async () => {
   }
 
   const syncLocalStorage = async () => {
-    console.log('boop');
     const updateHash = new Date().getTime();
     localStorage.setItem('fce_update_hash', updateHash, false);
     await uploadSettings(boards);
