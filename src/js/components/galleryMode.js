@@ -1,4 +1,4 @@
-let open = false;
+let isOpen = false;
 
 const openGallery = (overlay, link, index, links) => {
   while (overlay.children.length) {
@@ -68,7 +68,7 @@ const openGallery = (overlay, link, index, links) => {
   closeButton.classList.add('close');
   closeButton.addEventListener('click', e => {
     e.preventDefault();
-    open = false;
+    isOpen = false;
     overlay.remove();
   });
   media.after(closeButton);
@@ -94,12 +94,43 @@ export default () => {
     gallery.addEventListener('click', e => {
       e.preventDefault();
 
-      if (!open) {
-        open = true;
+      if (!isOpen) {
+        isOpen = true;
         document.body.append(overlay);
         openGallery(overlay, link, index, links);
       }
 
     });
+  });
+
+  document.addEventListener('keyup', e => {
+    if (isOpen) {
+      if (e.key === 'Escape') {
+        isOpen = false;
+        overlay.remove();
+
+        return;
+      }
+
+      if (e.key === 'ArrowLeft') {
+        const button = document.querySelector('#fce-gallery .nav-button.previous');
+
+        if (button) {
+          button.click();
+        }
+
+        return;
+      }
+
+      if (e.key === 'ArrowRight') {
+        const button = document.querySelector('#fce-gallery .nav-button.next');
+
+        if (button) {
+          button.click();
+        }
+
+        return;
+      }
+    }
   });
 }

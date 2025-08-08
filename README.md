@@ -12,4 +12,4 @@ All of the settings the site stores in the local storage and cookies are also st
 ### Thread Watcher Changes
 - Added board dividers.
 ### Thread Changes
-- Added gallery view activated from any post with media item via the video camera button.
+- Added gallery view activated from any post with media item via the video camera button. The gallery makes use of the arrow keys to navigate and escape to close.
