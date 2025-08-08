@@ -60,11 +60,12 @@ export default async () => {
     await uploadSettings(boards);
   }
 
-  const syncLocalStorage = async () => {
+  document.addEventListener('fce:storage-updated', () => {
     const updateHash = new Date().getTime();
     localStorage.setItem('fce_update_hash', updateHash, false);
-    await uploadSettings(boards);
-  }
 
-  document.addEventListener('fce:storage-updated', debounce(syncLocalStorage, 1000));
+    debounce (async () => {
+      await uploadSettings(boards);
+    }, 5000);
+  });
 };

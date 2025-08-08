@@ -9,11 +9,7 @@ body {
     .thread {
       &:has(>.unwatchIcon) {
         .thumb {
-          border: 3px dashed forestgreen;
-
-          &:hover {
-            border-color: lime;
-          }
+          border: 3px dashed lime;
         }
       }
 
