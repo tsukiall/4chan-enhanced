@@ -11,5 +11,7 @@ All of the settings the site stores in the local storage and cookies are also st
 - Added image hover tied to the original 4chan setting.
 ### Thread Watcher Changes
 - Added board dividers.
+- Updated unwatch buttons.
+- Added status icons.
 ### Thread Changes
 - Added gallery view activated from any post with media item via the video camera button. The gallery makes use of the arrow keys to navigate and escape to close.
