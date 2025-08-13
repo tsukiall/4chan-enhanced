@@ -46,6 +46,8 @@ export default async () => {
   const updateHash = localStorage.getItem('fce_update_hash');
   const syncSettings = await chrome.runtime.sendMessage({ event: 'getStorage', boards: boards });
 
+  const uploadDebounce = debounce(uploadSettings, 5000);
+
   if (syncSettings) {
     if (updateHash) {
       if (updateHash < syncSettings.fce_update_hash) {
@@ -64,8 +66,6 @@ export default async () => {
     const updateHash = new Date().getTime();
     localStorage.setItem('fce_update_hash', updateHash, false);
 
-    debounce (async () => {
-      await uploadSettings(boards);
-    }, 5000);
+    uploadDebounce(boards);
   });
 };

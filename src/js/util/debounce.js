@@ -1,11 +1,13 @@
 export default (callback, wait) => {
   let timeoutId = null;
 
-  return (...args) => {
-    window.clearTimeout(timeoutId);
+  return function (...args) {
+    if (timeoutId) {
+      clearTimeout(timeoutId);
+    }
 
-    timeoutId = window.setTimeout(() => {
-      callback(...args);
+    timeoutId = setTimeout(() => {
+      callback.apply(this, args);
     }, wait);
   };
 }

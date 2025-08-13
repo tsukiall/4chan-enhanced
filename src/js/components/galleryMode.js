@@ -34,7 +34,13 @@ const openGallery = (overlay, link, index, links) => {
   media.src = url;
   media.classList.add('media');
   overlay.append(media);
-  link.scrollIntoView();
+
+  const { bottom } = link.closest('.postContainer').getBoundingClientRect();
+
+  scrollTo({
+    top: bottom - innerHeight + scrollY + 40,
+    behavior: 'smooth',
+  });
 
   if (index > 0) {
     const prevButton = document.createElement('button');
@@ -78,18 +84,23 @@ const openGallery = (overlay, link, index, links) => {
   closeButton.append(closeIcon);
 }
 
-export default () => {
-  const overlay = document.createElement('div');
-  overlay.id = 'fce-gallery';
-
+const updateButtons = overlay => {
   document.querySelectorAll('.board .thread .postContainer .fileText').forEach((link, index, links) => {
-    const gallery = document.createElement('button');
-    gallery.classList.add('fce-gallery-button');
-    link.append(gallery);
+    const existing = link.querySelector('.js-fce-gallery-button');
+    let gallery;
 
-    const galleryIcon = document.createElement('img');
-    galleryIcon.src = chrome.runtime.getURL('icons/video-solid-full.svg');
-    gallery.append(galleryIcon);
+    if (!existing) {
+      gallery = document.createElement('button');
+      gallery.classList.add('fce-gallery-button', 'js-fce-gallery-button');
+      link.append(gallery);
+
+      const galleryIcon = document.createElement('img');
+      galleryIcon.src = chrome.runtime.getURL('icons/video-solid-full.svg');
+      gallery.append(galleryIcon);
+    } else {
+      gallery = existing.cloneNode(true);
+      existing.replaceWith(gallery);
+    }
 
     gallery.addEventListener('click', e => {
       e.preventDefault();
@@ -99,8 +110,18 @@ export default () => {
         document.body.append(overlay);
         openGallery(overlay, link, index, links);
       }
-
     });
+  });
+}
+
+export default () => {
+  const overlay = document.createElement('div');
+  overlay.id = 'fce-gallery';
+
+  updateButtons(overlay);
+
+  document.addEventListener('fce:thread-updated', () => {
+    updateButtons(overlay);
   });
 
   document.addEventListener('keyup', e => {

@@ -7,6 +7,7 @@ export const settingKeys = [
   '4chan-watch',
   'fce_update_hash',
   '4chan-tw-timestamp',
+  '4chan-continue-thread',
 ];
 
 export const iterableSettingKeys = [
