@@ -3,16 +3,34 @@ const updateUnseen = (settings, threadID, lastSeen) => {
 
   const unseen = posts.length - (Array.from(posts).indexOf(lastSeen) + 1);
 
-  settings[threadID] = [lastSeen.id, unseen];
+  settings[threadID] = [lastSeen.id, unseen, new Date().getTime()];
+  localStorage.setItem('4chan-continue-thread', JSON.stringify(settings));
+  document.dispatchEvent(new CustomEvent('fce:storage-updated'));
+  document.dispatchEvent(new CustomEvent('fce:continue-updated'));
+}
+
+const pruneOldThreads = (settings) => {
+  const compareDate = new Date();
+  compareDate.setMonth(compareDate.getMonth() - 2);
+
+  Object.keys(settings).forEach(key => {
+    if (settings[key][2] && settings[key][2] < compareDate.getTime()) {
+      delete settings[key];
+    }
+  });
+
   localStorage.setItem('4chan-continue-thread', JSON.stringify(settings));
   document.dispatchEvent(new CustomEvent('fce:storage-updated'));
   document.dispatchEvent(new CustomEvent('fce:continue-updated'));
 }
 
 export default () => {
+  const settings = JSON.parse(localStorage.getItem('4chan-continue-thread')) || {};
+
+  pruneOldThreads(settings);
+
   if (location.href.match(/.+\/thread\/.+/)) {
-    const threadID = location.href.match(/.+\/thread\/(.*)/)[1];
-    const settings = JSON.parse(localStorage.getItem('4chan-continue-thread')) || {};
+    const threadID = location.href.match(/.+\/thread\/(\d*)/)[1];
     let [postID, _] = settings[threadID] ? settings[threadID] : [];
 
     let lastSeen = postID ? document.querySelector(`#${postID}`) : document.querySelector('.board .thread .postContainer');
@@ -24,6 +42,7 @@ export default () => {
       top: bottom - innerHeight + scrollY + 40,
       behavior: 'smooth',
     });
+
 
     const intersectionObserver = new IntersectionObserver((entries, self) => {
       entries.forEach(intersection => {
