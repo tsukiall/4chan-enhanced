@@ -4,7 +4,7 @@
   "description": "QOL improvements and additional functionality over the 4chan experience",
   "scripts": {
     "dev": "webpack",
-    "prod": "webpack --env production",
+    "prod": "webpack --env production && cd ./build && zip -r build.zip .",
     "watch": "webpack --watch"
   },
   "author": "Alex Asenov",
