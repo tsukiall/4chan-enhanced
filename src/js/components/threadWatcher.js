@@ -35,7 +35,7 @@ const updateWatcher = (watchList) => {
 
     let threadIcon = 'foundericon';
 
-    if (!thread[1]) {
+    if (!thread[1] || thread[1] < 0) {
       threadIcon = 'adminicon';
     } else if (thread[3]) {
       threadIcon = 'developericon';
