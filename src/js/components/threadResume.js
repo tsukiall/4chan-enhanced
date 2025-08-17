@@ -36,7 +36,7 @@ export default () => {
     let lastSeen = document.querySelector(`#${postID}`);
 
     if (!lastSeen) {
-      document.querySelector('.board .thread .postContainer');
+      lastSeen = document.querySelector('.board .thread .postContainer');
     }
 
     lastSeen.classList.add('current');
