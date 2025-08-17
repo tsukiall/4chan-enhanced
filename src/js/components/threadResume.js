@@ -33,7 +33,11 @@ export default () => {
     const threadID = location.href.match(/.+\/thread\/(\d*)/)[1];
     let [postID, _] = settings[threadID] ? settings[threadID] : [];
 
-    let lastSeen = postID ? document.querySelector(`#${postID}`) : document.querySelector('.board .thread .postContainer');
+    let lastSeen = document.querySelector(`#${postID}`);
+
+    if (!lastSeen) {
+      document.querySelector('.board .thread .postContainer');
+    }
 
     lastSeen.classList.add('current');
     const { bottom } = lastSeen.getBoundingClientRect();
