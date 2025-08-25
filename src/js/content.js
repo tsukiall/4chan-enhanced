@@ -8,13 +8,15 @@ import threadWatcher from './components/threadWatcher.js';
 import catalogImageHover from './components/catalogImageHover.js';
 
 (async () => {
-  await syncSettings();
-  quickActions();
-  threadWatcher();
-  galleryMode();
-  threadResume();
+  if (!(document.querySelector("[alt='404']"))) {
+    await syncSettings();
+    quickActions();
+    threadWatcher();
+    galleryMode();
+    threadResume();
+
+    catalogImageHover();
+  }
 
   document.body.classList.add('fce-loaded');
-
-  await catalogImageHover();
 })();
