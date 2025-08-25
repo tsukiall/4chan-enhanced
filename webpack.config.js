@@ -55,7 +55,6 @@ const config = {
 export default env => {
   if (env && env.production) {
     config.mode = 'production';
-    config.devtool = 'eval';
   }
 
   return config;
