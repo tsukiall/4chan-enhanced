@@ -1,7 +1,7 @@
 {
   "name": "4chan Enhanced",
   "description": "QOL improvements and additional functionality over the 4chan experience",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "manifest_version": 3,
   "icons": {
     "16": "images/icon-16.png",

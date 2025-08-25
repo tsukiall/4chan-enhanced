@@ -1,6 +1,6 @@
 {
   "name": "4chan-enhanced",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "QOL improvements and additional functionality over the 4chan experience",
   "scripts": {
     "dev": "webpack",
