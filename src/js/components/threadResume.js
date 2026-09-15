@@ -24,6 +24,26 @@ const pruneOldThreads = (settings) => {
   document.dispatchEvent(new CustomEvent('fce:continue-updated'));
 }
 
+const findLastSeen = (postID) => {
+  const posts = Array.from(document.querySelectorAll('.board .thread .postContainer'));
+
+  if (!postID) {
+    return posts[0];
+  }
+
+  const lastSeen = document.querySelector(`#${postID}`);
+
+  if (lastSeen) {
+    return lastSeen;
+  }
+
+  // The saved post was deleted, so fall back to the closest post before it (post numbers are incremental)
+  const postNumber = parseInt(postID.replace(/\D/g, ''), 10);
+  const previousPost = posts.filter(post => parseInt(post.id.replace(/\D/g, ''), 10) < postNumber).pop();
+
+  return previousPost || posts[0];
+}
+
 export default () => {
   const settings = JSON.parse(localStorage.getItem('4chan-continue-thread')) || {};
 
@@ -33,11 +53,7 @@ export default () => {
     const threadID = location.href.match(/.+\/thread\/(\d*)/)[1];
     let [postID, _] = settings[threadID] ? settings[threadID] : [];
 
-    let lastSeen = document.querySelector(`#${postID}`);
-
-    if (!lastSeen) {
-      lastSeen = document.querySelector('.board .thread .postContainer');
-    }
+    let lastSeen = findLastSeen(postID);
 
     lastSeen.classList.add('current');
     const { bottom } = lastSeen.getBoundingClientRect();
