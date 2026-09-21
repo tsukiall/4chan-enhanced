@@ -1,5 +1,15 @@
 let isOpen = false;
 
+const hasModifier = e => e.ctrlKey || e.shiftKey || e.altKey || e.metaKey;
+
+const navigate = direction => {
+  const button = document.querySelector(`#fce-gallery .nav-button.${direction}`);
+
+  if (button) {
+    button.click();
+  }
+}
+
 const openGallery = (overlay, link, index, links) => {
   while (overlay.children.length) {
     overlay.removeChild(overlay.lastChild);
@@ -125,6 +135,10 @@ export default () => {
   });
 
   document.addEventListener('keyup', e => {
+    if (hasModifier(e)) {
+      return;
+    }
+
     if (isOpen) {
       if (e.key === 'Escape') {
         isOpen = false;
@@ -134,24 +148,35 @@ export default () => {
       }
 
       if (e.key === 'ArrowLeft') {
-        const button = document.querySelector('#fce-gallery .nav-button.previous');
-
-        if (button) {
-          button.click();
-        }
+        navigate('previous');
 
         return;
       }
 
       if (e.key === 'ArrowRight') {
-        const button = document.querySelector('#fce-gallery .nav-button.next');
-
-        if (button) {
-          button.click();
-        }
+        navigate('next');
 
         return;
       }
     }
   });
+
+  let lastWheel = 0;
+
+  overlay.addEventListener('wheel', e => {
+    if (hasModifier(e)) {
+      return;
+    }
+
+    e.preventDefault();
+
+    const now = Date.now();
+
+    if (e.deltaY === 0 || now - lastWheel < 150) {
+      return;
+    }
+
+    lastWheel = now;
+    navigate(e.deltaY > 0 ? 'next' : 'previous');
+  }, { passive: false });
 }

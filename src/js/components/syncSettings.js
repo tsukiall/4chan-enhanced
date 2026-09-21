@@ -1,8 +1,18 @@
 import debounce from '../util/debounce.js';
 import { iterableSettingKeys, settingKeys } from '../util/keys.js';
 
+const sendMessage = async message => {
+  const response = await chrome.runtime.sendMessage(message);
+
+  if (response?.error) {
+    throw new Error(response.error);
+  }
+
+  return response;
+}
+
 const downloadSettings = syncSettings => {
-  for (let key of settingKeys) {
+  for (let key in syncSettings) {
     localStorage.setItem(key, syncSettings[key], false);
   }
 
@@ -36,7 +46,11 @@ const uploadSettings = async boards => {
       localStorage.setItem('fce_update_hash', siteSettings.fce_update_hash, false);
     }
 
-    await chrome.runtime.sendMessage({ event: 'setStorage', data: siteSettings });
+    try {
+      await sendMessage({ event: 'setStorage', data: siteSettings });
+    } catch (error) {
+      console.error('4chan Enhanced: failed to upload settings', error);
+    }
   }
 }
 
@@ -44,22 +58,21 @@ export default async () => {
   const boards = Array.from(document.querySelectorAll('#boardNavDesktop .boardList>a')).map(e => e.textContent);
 
   const updateHash = localStorage.getItem('fce_update_hash');
-  const syncSettings = await chrome.runtime.sendMessage({ event: 'getStorage', boards: boards });
-
   const uploadDebounce = debounce(uploadSettings, 5000);
 
-  if (syncSettings) {
-    if (updateHash) {
-      if (updateHash < syncSettings.fce_update_hash) {
-        downloadSettings(syncSettings);
-      } else if (updateHash > syncSettings.fce_update_hash) {
-        await uploadSettings(boards);
-      }
-    } else {
+  try {
+    const syncSettings = await sendMessage({ event: 'getStorage', boards: boards });
+    const syncHash = syncSettings?.fce_update_hash;
+
+    if (!syncHash) {
+      await uploadSettings(boards);
+    } else if (!updateHash || updateHash < syncHash) {
       downloadSettings(syncSettings);
+    } else if (updateHash > syncHash) {
+      await uploadSettings(boards);
     }
-  } else {
-    await uploadSettings(boards);
+  } catch (error) {
+    console.error('4chan Enhanced: failed to sync settings', error);
   }
 
   document.addEventListener('fce:storage-updated', () => {

@@ -83,10 +83,18 @@ export default () => {
 
     observer.observe(watchList, { attributes: true, childList: true, subtree: true });
 
-    document.addEventListener('fce:continue-updated', () => {
+    const refresh = () => {
       observer.disconnect();
       updateWatcher(watchList);
       observer.observe(watchList, { attributes: true, childList: true, subtree: true });
+    };
+
+    document.addEventListener('fce:continue-updated', refresh);
+
+    window.addEventListener('storage', e => {
+      if (e.key === '4chan-continue-thread') {
+        refresh();
+      }
     });
   }
 }
