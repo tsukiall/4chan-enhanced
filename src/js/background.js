@@ -33,16 +33,27 @@ chrome.runtime.onMessage.addListener((message, _, sendResponse) => {
 
         break;
       case 'setStorage':
-        for (let key in message.data) {
-          data = await chrome.storage.sync.get(key);
-          data[key] = message.data[key];
+        const items = {};
 
-          await chrome.storage.sync.set(data);
+        for (let key in message.data) {
+          const size = new TextEncoder().encode(key + JSON.stringify(message.data[key])).length;
+
+          if (size > chrome.storage.sync.QUOTA_BYTES_PER_ITEM) {
+            console.warn(`4chan Enhanced: not syncing ${key}, ${size} bytes is over the ${chrome.storage.sync.QUOTA_BYTES_PER_ITEM} byte limit`);
+            continue;
+          }
+
+          items[key] = message.data[key];
         }
+
+        await chrome.storage.sync.set(items);
 
         sendResponse(true);
     }
-  })();
+  })().catch(error => {
+    console.error(`4chan Enhanced: ${message.event} failed`, error);
+    sendResponse({ error: error.message });
+  });
 
   return true;
 });

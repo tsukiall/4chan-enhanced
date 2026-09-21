@@ -1,15 +1,23 @@
-const updateUnseen = (settings, threadID, lastSeen) => {
-  const posts = document.querySelectorAll('.board .thread .postContainer');
+const getSettings = () => JSON.parse(localStorage.getItem('4chan-continue-thread')) || {};
 
-  const unseen = posts.length - (Array.from(posts).indexOf(lastSeen) + 1);
-
-  settings[threadID] = [lastSeen.id, unseen, new Date().getTime()];
+const saveSettings = (settings) => {
   localStorage.setItem('4chan-continue-thread', JSON.stringify(settings));
   document.dispatchEvent(new CustomEvent('fce:storage-updated'));
   document.dispatchEvent(new CustomEvent('fce:continue-updated'));
 }
 
-const pruneOldThreads = (settings) => {
+const updateUnseen = (threadID, lastSeen) => {
+  const posts = document.querySelectorAll('.board .thread .postContainer');
+
+  const unseen = posts.length - (Array.from(posts).indexOf(lastSeen) + 1);
+
+  const settings = getSettings();
+  settings[threadID] = [lastSeen.id, unseen, new Date().getTime()];
+  saveSettings(settings);
+}
+
+const pruneOldThreads = () => {
+  const settings = getSettings();
   const compareDate = new Date();
   compareDate.setMonth(compareDate.getMonth() - 2);
 
@@ -19,9 +27,7 @@ const pruneOldThreads = (settings) => {
     }
   });
 
-  localStorage.setItem('4chan-continue-thread', JSON.stringify(settings));
-  document.dispatchEvent(new CustomEvent('fce:storage-updated'));
-  document.dispatchEvent(new CustomEvent('fce:continue-updated'));
+  saveSettings(settings);
 }
 
 const findLastSeen = (postID) => {
@@ -37,7 +43,6 @@ const findLastSeen = (postID) => {
     return lastSeen;
   }
 
-  // The saved post was deleted, so fall back to the closest post before it (post numbers are incremental)
   const postNumber = parseInt(postID.replace(/\D/g, ''), 10);
   const previousPost = posts.filter(post => parseInt(post.id.replace(/\D/g, ''), 10) < postNumber).pop();
 
@@ -45,15 +50,16 @@ const findLastSeen = (postID) => {
 }
 
 export default () => {
-  const settings = JSON.parse(localStorage.getItem('4chan-continue-thread')) || {};
-
-  pruneOldThreads(settings);
+  pruneOldThreads();
 
   if (location.href.match(/.+\/thread\/.+/)) {
     const threadID = location.href.match(/.+\/thread\/(\d*)/)[1];
+    const settings = getSettings();
     let [postID, _] = settings[threadID] ? settings[threadID] : [];
 
     let lastSeen = findLastSeen(postID);
+
+    updateUnseen(threadID, lastSeen);
 
     lastSeen.classList.add('current');
     const { bottom } = lastSeen.getBoundingClientRect();
@@ -73,7 +79,7 @@ export default () => {
 
           if (intersection.target !== lastSeen) {
             lastSeen = intersection.target;
-            updateUnseen(settings, threadID, lastSeen);
+            updateUnseen(threadID, lastSeen);
           }
 
           self.disconnect();
@@ -91,7 +97,7 @@ export default () => {
 
     const mutationObserver = new MutationObserver(() => {
       document.dispatchEvent(new CustomEvent('fce:thread-updated'));
-      updateUnseen(settings, threadID, lastSeen);
+      updateUnseen(threadID, lastSeen);
       intersectionObserver.observe(lastSeen);
     });
 
